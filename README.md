@@ -1,5 +1,4 @@
-# Insta Print - Self-Service Kiosk & Web App
-
+# Insta Print - Self-Service Web App
 Insta Print is a modern, high-performance self-service printer web application featuring an animated kiosk landing screen, QR code mobile pair & login, drag-and-drop document upload with AI document classification, custom print options (Color, B&W, Custom mixed ranges, Duplex), UPI/QR payment workflow, live print hardware animation, and a 1-minute idle auto-reset safety timer.
 
 ---
