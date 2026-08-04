@@ -15,13 +15,15 @@ import IdleTimer from './components/IdleTimer';
 export function App() {
   // Step Machine: 'landing' | 'auth' | 'admin' | 'upload' | 'preview' | 'config' | 'payment' | 'printing'
   const [currentStep, setCurrentStep] = useState(() => {
-    return sessionStorage.getItem('instant_print_step') || 'landing';
+    const savedStep = sessionStorage.getItem('instant_print_step');
+    return savedStep === 'admin' ? 'landing' : (savedStep || 'landing');
   });
 
   const [currentUser, setCurrentUser] = useState(() => {
     try {
       const saved = sessionStorage.getItem('instant_print_user');
-      return saved ? JSON.parse(saved) : null;
+      const parsedUser = saved ? JSON.parse(saved) : null;
+      return parsedUser?.isAdmin ? null : parsedUser;
     } catch {
       return null;
     }
@@ -45,13 +47,17 @@ export function App() {
     }
   });
 
-  // Save state updates to sessionStorage to maintain location across browser refreshes
+  // Save state updates to sessionStorage (Persist Customer sessions ONLY, Exclude Admin for Security)
   useEffect(() => {
-    sessionStorage.setItem('instant_print_step', currentStep);
+    if (currentStep === 'admin') {
+      sessionStorage.removeItem('instant_print_step');
+    } else {
+      sessionStorage.setItem('instant_print_step', currentStep);
+    }
   }, [currentStep]);
 
   useEffect(() => {
-    if (currentUser) {
+    if (currentUser && !currentUser.isAdmin) {
       sessionStorage.setItem('instant_print_user', JSON.stringify(currentUser));
     } else {
       sessionStorage.removeItem('instant_print_user');
