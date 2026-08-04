@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import KioskHeader from './components/KioskHeader';
 import BackgroundFX from './components/BackgroundFX';
 import LandingPage from './components/LandingPage';
 import QRModal from './components/QRModal';
