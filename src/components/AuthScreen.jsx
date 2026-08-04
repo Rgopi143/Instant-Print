@@ -8,7 +8,7 @@ const AuthScreen = ({ onLoginSuccess, onGuestContinue }) => {
   const [step, setStep] = useState('phone');
   const [phone, setPhone] = useState('');
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
-  const [pin, setPin] = useState(['', '', '', '']);
+  const [pin, setPin] = useState(['', '', '', '', '', '']);
   const [loading, setLoading] = useState(false);
 
   const handleSendOTP = (e) => {
@@ -47,7 +47,7 @@ const AuthScreen = ({ onLoginSuccess, onGuestContinue }) => {
     setPin(newPin);
 
     // Auto-advance focus to next digit input box
-    if (value && index < 3) {
+    if (value && index < 5) {
       const nextInput = document.getElementById(`pin-input-${index + 1}`);
       if (nextInput) nextInput.focus();
     }
@@ -222,7 +222,7 @@ const AuthScreen = ({ onLoginSuccess, onGuestContinue }) => {
             </p>
 
             <form onSubmit={handleVerifyPin} className="space-y-6">
-              <div className="flex justify-center gap-3">
+              <div className="flex justify-center gap-1.5 sm:gap-2">
                 {pin.map((digit, idx) => (
                   <input
                     key={idx}
@@ -231,14 +231,14 @@ const AuthScreen = ({ onLoginSuccess, onGuestContinue }) => {
                     maxLength={1}
                     value={digit}
                     onChange={(e) => handlePinChange(idx, e.target.value)}
-                    className="w-12 h-14 text-center text-2xl font-bold bg-slate-50 border border-slate-300 focus:border-amber-500 focus:bg-white text-slate-950 rounded-xl focus:outline-none transition-all"
+                    className="w-10 sm:w-11 h-12 sm:h-13 text-center text-xl font-bold bg-slate-50 border border-slate-300 focus:border-amber-500 focus:bg-white text-slate-950 rounded-xl focus:outline-none transition-all"
                   />
                 ))}
               </div>
 
               <button
                 type="submit"
-                disabled={loading || pin.join('').length < 4}
+                disabled={loading || pin.join('').length < 6}
                 className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl bg-gradient-to-r from-amber-600 via-amber-500 to-cyan-600 text-white font-bold text-sm shadow-lg shadow-amber-600/20 hover:opacity-95 transition-all active:scale-95 disabled:opacity-50"
               >
                 {loading ? (
