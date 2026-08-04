@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { QrCode, Smartphone, Lock, ArrowRight, UserCheck, Sparkles, CheckCircle2 } from 'lucide-react';
-import { generateSessionId } from '../utils/qrGenerator';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Smartphone, Lock, ArrowRight, UserCheck, CheckCircle2, Bell } from 'lucide-react';
 import { audioFX } from '../utils/audioFX';
 
 const AuthScreen = ({ onLoginSuccess, onGuestContinue }) => {
@@ -9,17 +8,33 @@ const AuthScreen = ({ onLoginSuccess, onGuestContinue }) => {
   const [step, setStep] = useState('phone');
   const [phone, setPhone] = useState('');
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
+  const [generatedOtp, setGeneratedOtp] = useState('');
+  const [showSmsToast, setShowSmsToast] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const handleSendOTP = (e) => {
-    e.preventDefault();
+    if (e) e.preventDefault();
     if (!phone || phone.length < 7) return;
     audioFX.playButtonClick();
     setLoading(true);
+
+    // Generate random 6-digit OTP
+    const newOtp = Math.floor(100000 + Math.random() * 900000).toString();
+    setGeneratedOtp(newOtp);
+
     setTimeout(() => {
       setLoading(false);
       setStep('otp');
-    }, 600);
+      setShowSmsToast(true);
+      audioFX.playSuccessChime();
+    }, 700);
+  };
+
+  const handleAutofillOtp = () => {
+    audioFX.playButtonClick();
+    if (generatedOtp && generatedOtp.length === 6) {
+      setOtp(generatedOtp.split(''));
+    }
   };
 
   const handleOtpChange = (index, value) => {
@@ -51,6 +66,43 @@ const AuthScreen = ({ onLoginSuccess, onGuestContinue }) => {
 
   return (
     <div className="relative z-10 flex flex-col items-center justify-center min-h-[calc(100vh-100px)] px-4 py-8 max-w-md mx-auto">
+      
+      {/* Simulated Instant Print 24/7 SMS Toast Notification Banner */}
+      <AnimatePresence>
+        {showSmsToast && generatedOtp && (
+          <motion.div
+            initial={{ opacity: 0, y: -40, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -30, scale: 0.95 }}
+            className="w-full mb-4 bg-slate-900 text-white p-4 rounded-2xl border border-cyan-500/50 shadow-2xl shadow-cyan-500/20 text-left"
+          >
+            <div className="flex items-start gap-3">
+              <div className="p-2 rounded-xl bg-cyan-500/20 text-cyan-400 shrink-0">
+                <Bell className="w-5 h-5 animate-bounce" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center justify-between text-[11px] text-cyan-300 font-semibold mb-0.5">
+                  <span>SMS • Instant Print 24/7</span>
+                  <span className="text-slate-400">Just Now</span>
+                </div>
+                <p className="text-xs text-slate-200 leading-snug">
+                  Your OTP for <span className="font-bold text-white">Instant Print 24/7</span> is <span className="font-mono text-cyan-300 font-extrabold text-sm px-1.5 py-0.5 bg-slate-800 rounded border border-cyan-500/30">{generatedOtp}</span>. Valid for 10 mins.
+                </p>
+
+                <button
+                  type="button"
+                  onClick={handleAutofillOtp}
+                  className="mt-2.5 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-extrabold text-xs transition-colors shadow-sm active:scale-95"
+                >
+                  <CheckCircle2 className="w-3.5 h-3.5" />
+                  <span>Tap to Auto-fill ({generatedOtp})</span>
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -68,7 +120,7 @@ const AuthScreen = ({ onLoginSuccess, onGuestContinue }) => {
 
             <h2 className="text-2xl font-bold text-slate-900">New Registration</h2>
             <p className="text-xs text-slate-500 mb-4">
-              Enter your mobile number to receive 6-digit OTP verification code.
+              Enter your mobile number to receive 6-digit OTP SMS from Instant Print 24/7.
             </p>
 
             <form onSubmit={handleSendOTP} className="space-y-4">
@@ -99,7 +151,7 @@ const AuthScreen = ({ onLoginSuccess, onGuestContinue }) => {
                   <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
                 ) : (
                   <>
-                    <span>Send OTP Code</span>
+                    <span>Send SMS OTP</span>
                     <ArrowRight className="w-4 h-4" />
                   </>
                 )}
@@ -120,7 +172,7 @@ const AuthScreen = ({ onLoginSuccess, onGuestContinue }) => {
           </div>
         )}
 
-        {/* Step 3: OTP Verification Input */}
+        {/* Step 2: OTP Verification Input */}
         {step === 'otp' && (
           <div className="space-y-4">
             <div className="flex justify-center mb-2">
@@ -130,12 +182,12 @@ const AuthScreen = ({ onLoginSuccess, onGuestContinue }) => {
             </div>
 
             <h2 className="text-2xl font-bold text-slate-900">Enter Verification Code</h2>
-            <p className="text-xs text-slate-500 mb-4">
-              6-digit OTP sent to +91 {phone}
+            <p className="text-xs text-slate-500 mb-2">
+              SMS OTP sent from <span className="font-semibold text-slate-800">Instant Print 24/7</span> to <span className="font-semibold text-slate-800">+91 {phone}</span>
             </p>
 
             <form onSubmit={handleVerifyOtp} className="space-y-6">
-              <div className="flex justify-center gap-2">
+              <div className="flex justify-center gap-1.5 sm:gap-2">
                 {otp.map((digit, idx) => (
                   <input
                     key={idx}
@@ -144,7 +196,7 @@ const AuthScreen = ({ onLoginSuccess, onGuestContinue }) => {
                     maxLength={1}
                     value={digit}
                     onChange={(e) => handleOtpChange(idx, e.target.value)}
-                    className="w-11 h-13 text-center text-xl font-bold bg-slate-50 border border-slate-300 focus:border-violet-600 focus:bg-white text-slate-950 rounded-xl focus:outline-none transition-all"
+                    className="w-10 sm:w-11 h-12 sm:h-13 text-center text-xl font-bold bg-slate-50 border border-slate-300 focus:border-violet-600 focus:bg-white text-slate-950 rounded-xl focus:outline-none transition-all"
                   />
                 ))}
               </div>
@@ -164,6 +216,16 @@ const AuthScreen = ({ onLoginSuccess, onGuestContinue }) => {
                 )}
               </button>
             </form>
+
+            <div className="pt-3 border-t border-slate-100 flex flex-col gap-2">
+              <button
+                type="button"
+                onClick={handleSendOTP}
+                className="text-xs text-cyan-700 hover:text-cyan-800 font-semibold py-1 transition-colors"
+              >
+                <span>Resend SMS OTP</span>
+              </button>
+            </div>
           </div>
         )}
 
