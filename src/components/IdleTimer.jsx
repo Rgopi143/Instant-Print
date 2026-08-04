@@ -66,7 +66,7 @@ const IdleTimer = ({ onReset, isActive = true }) => {
 
           <h3 className="text-xl font-bold text-slate-900 mb-1">Are you still there?</h3>
           <p className="text-xs text-slate-500 mb-6">
-            To protect your privacy, kiosk session will reset to landing page in:
+            To protect your privacy, your session will reset to landing page in:
           </p>
 
           {/* Large Countdown Ring Number */}

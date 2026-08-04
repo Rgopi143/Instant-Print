@@ -4,11 +4,11 @@ import { PhoneCall, Volume2, EyeOff, Sparkles, MessageSquare } from 'lucide-reac
 import { audioFX } from '../utils/audioFX';
 
 const SPEECH_MESSAGES = [
-  "Hey! I'm talking on the phone & sending my PDF directly to the kiosk! 📱",
+  "Hey! I'm talking on the phone & sending my PDF directly to print! 📱",
   "Zero waiting time! Tap TOUCH TO START or scan QR code ⚡",
   "Catch me if you can! Tap me to hide or peek! 🙈",
   "AI color detection is awesome... saves so much money! 💡",
-  "Fastest self-service printer in town! 🚀"
+  "Fastest self-service printing! 🚀"
 ];
 
 const KioskCharacter = () => {

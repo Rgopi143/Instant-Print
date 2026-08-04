@@ -45,7 +45,7 @@ const PaymentScreen = ({ printJobDetails, onPaymentSuccess }) => {
           
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-semibold mb-4">
             <Lock className="w-3.5 h-3.5" />
-            <span>256-BIT ENCRYPTED KIOSK GATEWAY</span>
+            <span>256-BIT ENCRYPTED SECURE GATEWAY</span>
           </div>
 
           <div className="relative w-60 h-60 bg-white p-4 rounded-2xl border border-slate-200 shadow-inner flex items-center justify-center overflow-hidden mb-4">
