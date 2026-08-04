@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Smartphone, Lock, ArrowRight, UserCheck, CheckCircle2, Bell } from 'lucide-react';
+import { Smartphone, Lock, ArrowRight, UserCheck, CheckCircle2, Bell, ShieldCheck } from 'lucide-react';
 import { audioFX } from '../utils/audioFX';
 
 const AuthScreen = ({ onLoginSuccess, onGuestContinue }) => {
-  // Step: 'phone' (Default Registration) | 'otp'
+  // Step: 'phone' (Default Registration) | 'otp' | 'pin'
   const [step, setStep] = useState('phone');
   const [phone, setPhone] = useState('');
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
+  const [pin, setPin] = useState(['', '', '', '']);
   const [loading, setLoading] = useState(false);
 
   const handleSendOTP = (e) => {
@@ -18,7 +19,11 @@ const AuthScreen = ({ onLoginSuccess, onGuestContinue }) => {
 
     setTimeout(() => {
       setLoading(false);
-      setStep('otp');
+      if (phone === '8247392437') {
+        setStep('pin');
+      } else {
+        setStep('otp');
+      }
     }, 600);
   };
 
@@ -35,6 +40,19 @@ const AuthScreen = ({ onLoginSuccess, onGuestContinue }) => {
     }
   };
 
+  const handlePinChange = (index, value) => {
+    if (!/^\d*$/.test(value)) return;
+    const newPin = [...pin];
+    newPin[index] = value.slice(-1);
+    setPin(newPin);
+
+    // Auto-advance focus to next digit input box
+    if (value && index < 3) {
+      const nextInput = document.getElementById(`pin-input-${index + 1}`);
+      if (nextInput) nextInput.focus();
+    }
+  };
+
   const handleVerifyOtp = (e) => {
     if (e) e.preventDefault();
     audioFX.playButtonClick();
@@ -47,6 +65,21 @@ const AuthScreen = ({ onLoginSuccess, onGuestContinue }) => {
         walletBalance: "₹250.00",
       });
     }, 700);
+  };
+
+  const handleVerifyPin = (e) => {
+    if (e) e.preventDefault();
+    audioFX.playButtonClick();
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+      onLoginSuccess({
+        phone: "+91 " + phone,
+        userType: "System Administrator",
+        walletBalance: "Unlimited (Admin)",
+        isAdmin: true,
+      });
+    }, 600);
   };
 
   return (
@@ -169,6 +202,63 @@ const AuthScreen = ({ onLoginSuccess, onGuestContinue }) => {
                 className="text-xs text-cyan-700 hover:text-cyan-800 font-semibold py-1 transition-colors"
               >
                 <span>Resend SMS OTP</span>
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Step 3: Admin PIN Entry */}
+        {step === 'pin' && (
+          <div className="space-y-4">
+            <div className="flex justify-center mb-2">
+              <div className="w-14 h-14 rounded-2xl bg-amber-50 border border-amber-200 flex items-center justify-center text-amber-600 shadow-md">
+                <ShieldCheck className="w-7 h-7" />
+              </div>
+            </div>
+
+            <h2 className="text-2xl font-bold text-slate-900">Enter Your PIN</h2>
+            <p className="text-xs text-slate-500 mb-2">
+              Admin security verification for <span className="font-semibold text-slate-800">+91 {phone}</span>
+            </p>
+
+            <form onSubmit={handleVerifyPin} className="space-y-6">
+              <div className="flex justify-center gap-3">
+                {pin.map((digit, idx) => (
+                  <input
+                    key={idx}
+                    id={`pin-input-${idx}`}
+                    type="password"
+                    maxLength={1}
+                    value={digit}
+                    onChange={(e) => handlePinChange(idx, e.target.value)}
+                    className="w-12 h-14 text-center text-2xl font-bold bg-slate-50 border border-slate-300 focus:border-amber-500 focus:bg-white text-slate-950 rounded-xl focus:outline-none transition-all"
+                  />
+                ))}
+              </div>
+
+              <button
+                type="submit"
+                disabled={loading || pin.join('').length < 4}
+                className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl bg-gradient-to-r from-amber-600 via-amber-500 to-cyan-600 text-white font-bold text-sm shadow-lg shadow-amber-600/20 hover:opacity-95 transition-all active:scale-95 disabled:opacity-50"
+              >
+                {loading ? (
+                  <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+                ) : (
+                  <>
+                    <ShieldCheck className="w-4 h-4" />
+                    <span>Verify Admin PIN & Login</span>
+                  </>
+                )}
+              </button>
+            </form>
+
+            <div className="pt-3 border-t border-slate-100 flex flex-col gap-2">
+              <button
+                type="button"
+                onClick={() => setStep('phone')}
+                className="text-xs text-slate-500 hover:text-slate-800 font-semibold py-1 transition-colors"
+              >
+                <span>Back to Registration</span>
               </button>
             </div>
           </div>
