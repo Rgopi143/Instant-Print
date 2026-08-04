@@ -7,11 +7,25 @@ const LandingPage = ({ onStart }) => {
   return (
     <div className="relative z-10 flex flex-col items-center justify-center min-h-[calc(100vh-80px)] px-4 py-8 text-center max-w-5xl mx-auto">
       
+      {/* Company Logo */}
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="mb-4"
+      >
+        <img
+          src="/RANBIDGE SOLUTIONS PRIVATE LIMITED.PNG"
+          alt="Ranbidge Solutions Private Limited"
+          className="h-28 sm:h-36 md:h-48 object-contain mx-auto drop-shadow-md"
+        />
+      </motion.div>
+
       {/* Top Floating Badge */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
+        transition={{ duration: 0.6, delay: 0.1 }}
         className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-900/80 border border-cyan-500/40 text-cyan-300 text-xs font-semibold shadow-lg shadow-cyan-500/10 mb-6"
       >
         <Sparkles className="w-4 h-4 text-cyan-400 animate-spin" style={{ animationDuration: '4s' }} />
@@ -47,12 +61,14 @@ const LandingPage = ({ onStart }) => {
             audioFX.playButtonClick();
             onStart();
           }}
-          className="group relative w-full inline-flex items-center justify-center gap-3 px-8 py-5 rounded-2xl bg-gradient-to-r from-cyan-500 via-cyan-400 to-violet-600 text-slate-950 font-black text-lg shadow-xl shadow-cyan-500/30 hover:shadow-cyan-500/50 transition-all duration-300 transform hover:-translate-y-1 active:scale-95 overflow-hidden"
+          className="group relative inline-flex items-center justify-center gap-2 sm:gap-3 px-5 py-4 sm:px-8 sm:py-5 rounded-2xl bg-gradient-to-r from-cyan-500 via-cyan-400 to-violet-600 text-slate-950 font-black text-lg shadow-xl shadow-cyan-500/30 hover:shadow-cyan-500/50 transition-all duration-300 transform hover:-translate-y-1 active:scale-95 overflow-hidden"
+          title="Touch to Start"
+          aria-label="Start Kiosk Session"
         >
           <span className="absolute inset-0 bg-white/20 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></span>
           <Printer className="w-7 h-7 text-slate-950 group-hover:rotate-12 transition-transform duration-300" />
-          <span>TOUCH TO START</span>
-          <ArrowRight className="w-6 h-6 text-slate-950 group-hover:translate-x-1 transition-transform" />
+          <span className="hidden sm:inline">TOUCH TO START</span>
+          <ArrowRight className="hidden sm:inline-block w-6 h-6 text-slate-950 group-hover:translate-x-1 transition-transform" />
         </button>
       </motion.div>
 

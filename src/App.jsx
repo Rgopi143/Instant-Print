@@ -140,7 +140,7 @@ export function App() {
   );
 
   return (
-    <div className="min-h-screen bg-white text-slate-100 flex flex-col relative overflow-x-hidden select-none">
+    <div className="min-h-screen bg-white text-slate-900 flex flex-col relative overflow-x-hidden select-none">
       
       {/* Background Animated Canvas */}
       <BackgroundFX />
@@ -160,7 +160,7 @@ export function App() {
 
       {/* View Container: Full Kiosk Mode vs Mobile Frame Preview */}
       {isMobileMode ? (
-        <div className="flex-1 flex items-center justify-center p-4 py-8">
+        <div className="flex-1 flex items-center justify-center p-4 py-8 relative z-10">
           {/* Smartphone Frame Mockup */}
           <div className="relative w-full max-w-[390px] h-[812px] bg-slate-950 border-[10px] border-slate-800 rounded-[50px] shadow-2xl overflow-hidden flex flex-col">
             {/* Notch */}

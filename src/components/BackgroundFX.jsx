@@ -9,12 +9,12 @@ const BackgroundFX = () => {
     const ctx = canvas.getContext('2d');
     let animationFrameId;
 
-    let width = (canvas.width = window.innerWidth);
-    let height = (canvas.height = window.innerHeight);
+    let width = (canvas.width = window.innerWidth || 1280);
+    let height = (canvas.height = window.innerHeight || 800);
 
     const handleResize = () => {
-      width = canvas.width = window.innerWidth;
-      height = canvas.height = window.innerHeight;
+      width = canvas.width = window.innerWidth || 1280;
+      height = canvas.height = window.innerHeight || 800;
     };
 
     window.addEventListener('resize', handleResize);

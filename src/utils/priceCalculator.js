@@ -11,7 +11,7 @@ export const PRICING_RATES = {
     "4x6 Glossy Photo": 10.00, // +₹10.00 / pg
   },
   DUPLEX_DISCOUNT: 0.10,   // 10% discount on duplex
-  TAX_RATE: 0.05,          // 5% tax
+  TAX_RATE: 0.00,          // Tax removed
 };
 
 /**

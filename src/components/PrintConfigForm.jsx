@@ -307,11 +307,6 @@ const PrintConfigForm = ({ documents, onProceedToPayment }) => {
               <span>Copies:</span>
               <span className="font-semibold text-slate-900">× {priceDetails.copies}</span>
             </div>
-
-            <div className="flex justify-between text-slate-600">
-              <span>Kiosk Tax (5%):</span>
-              <span className="font-semibold text-slate-800">₹{priceDetails.tax}</span>
-            </div>
           </div>
 
           {/* Grand Total Display */}
