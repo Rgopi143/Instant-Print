@@ -5,19 +5,19 @@ import { audioFX } from '../utils/audioFX';
 
 const LandingPage = ({ onStart }) => {
   return (
-    <div className="relative z-10 flex flex-col items-center justify-center min-h-[calc(100vh-80px)] px-4 py-8 text-center max-w-5xl mx-auto">
+    <div className="relative z-10 flex flex-col items-center justify-center min-h-screen px-4 py-4 text-center max-w-5xl mx-auto no-scrollbar overflow-hidden">
       
       {/* Company Logo */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="mb-4"
+        className="mb-3"
       >
         <img
           src="/RANBIDGE SOLUTIONS PRIVATE LIMITED.PNG"
           alt="Ranbidge Solutions Private Limited"
-          className="h-20 sm:h-36 md:h-52 max-w-full object-contain mx-auto drop-shadow-lg"
+          className="h-20 sm:h-32 md:h-44 max-w-full object-contain mx-auto drop-shadow-lg"
         />
       </motion.div>
 
@@ -26,7 +26,7 @@ const LandingPage = ({ onStart }) => {
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.1 }}
-        className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-900/80 border border-cyan-500/40 text-cyan-300 text-xs font-semibold shadow-lg shadow-cyan-500/10 mb-6"
+        className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-900/80 border border-cyan-500/40 text-cyan-300 text-xs font-semibold shadow-lg shadow-cyan-500/10 mb-4"
       >
         <Sparkles className="w-4 h-4 text-cyan-400 animate-spin" style={{ animationDuration: '4s' }} />
         <span>AI-POWERED SELF-SERVICE PRINTER TERMINAL</span>
@@ -38,13 +38,13 @@ const LandingPage = ({ onStart }) => {
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.7, delay: 0.1 }}
       >
-        <h1 className="text-4xl md:text-6xl lg:text-7xl font-black text-slate-900 tracking-tight leading-tight mb-4">
+        <h1 className="text-3xl sm:text-5xl md:text-6xl font-black text-slate-900 tracking-tight leading-tight mb-3">
           Instant Printing <br className="hidden sm:inline" />
           <span className="bg-clip-text text-transparent bg-gradient-to-r from-cyan-600 via-violet-600 to-fuchsia-600">
             Zero Waiting Time.
           </span>
         </h1>
-        <p className="max-w-2xl mx-auto text-base sm:text-lg text-slate-600 mb-10">
+        <p className="max-w-2xl mx-auto text-sm sm:text-base text-slate-600 mb-6">
           Upload PDF, DOCX, or Photos. AI automatically analyzes page count, color distribution, and optimizes print settings for lowest cost.
         </p>
       </motion.div>
@@ -54,7 +54,7 @@ const LandingPage = ({ onStart }) => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.2 }}
-        className="flex items-center justify-center w-full max-w-sm mb-12"
+        className="flex items-center justify-center w-full max-w-sm mb-4"
       >
         <button
           onClick={() => {
