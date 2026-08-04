@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Printer, Sparkles, ArrowRight } from 'lucide-react';
 import { audioFX } from '../utils/audioFX';
+import KioskCharacter from './KioskCharacter';
 
 const LandingPage = ({ onStart }) => {
   return (
@@ -71,6 +72,9 @@ const LandingPage = ({ onStart }) => {
           <ArrowRight className="hidden sm:inline-block w-6 h-6 text-slate-950 group-hover:translate-x-1 transition-transform" />
         </button>
       </motion.div>
+
+      {/* Animated Man Mascot (Phone Call & Hide-and-Seek) */}
+      <KioskCharacter />
 
     </div>
   );
