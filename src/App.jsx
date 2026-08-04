@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import KioskHeader from './components/KioskHeader';
 import BackgroundFX from './components/BackgroundFX';
 import LandingPage from './components/LandingPage';
@@ -14,10 +14,66 @@ import IdleTimer from './components/IdleTimer';
 
 export function App() {
   // Step Machine: 'landing' | 'auth' | 'admin' | 'upload' | 'preview' | 'config' | 'payment' | 'printing'
-  const [currentStep, setCurrentStep] = useState('landing');
-  const [currentUser, setCurrentUser] = useState(null);
-  const [documents, setDocuments] = useState([]);
-  const [printJobDetails, setPrintJobDetails] = useState(null);
+  const [currentStep, setCurrentStep] = useState(() => {
+    return sessionStorage.getItem('instant_print_step') || 'landing';
+  });
+
+  const [currentUser, setCurrentUser] = useState(() => {
+    try {
+      const saved = sessionStorage.getItem('instant_print_user');
+      return saved ? JSON.parse(saved) : null;
+    } catch {
+      return null;
+    }
+  });
+
+  const [documents, setDocuments] = useState(() => {
+    try {
+      const saved = sessionStorage.getItem('instant_print_docs');
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  const [printJobDetails, setPrintJobDetails] = useState(() => {
+    try {
+      const saved = sessionStorage.getItem('instant_print_job');
+      return saved ? JSON.parse(saved) : null;
+    } catch {
+      return null;
+    }
+  });
+
+  // Save state updates to sessionStorage to maintain location across browser refreshes
+  useEffect(() => {
+    sessionStorage.setItem('instant_print_step', currentStep);
+  }, [currentStep]);
+
+  useEffect(() => {
+    if (currentUser) {
+      sessionStorage.setItem('instant_print_user', JSON.stringify(currentUser));
+    } else {
+      sessionStorage.removeItem('instant_print_user');
+    }
+  }, [currentUser]);
+
+  useEffect(() => {
+    if (documents && documents.length > 0) {
+      const cleanDocs = documents.map(({ rawFile, ...rest }) => rest);
+      sessionStorage.setItem('instant_print_docs', JSON.stringify(cleanDocs));
+    } else {
+      sessionStorage.removeItem('instant_print_docs');
+    }
+  }, [documents]);
+
+  useEffect(() => {
+    if (printJobDetails) {
+      sessionStorage.setItem('instant_print_job', JSON.stringify(printJobDetails));
+    } else {
+      sessionStorage.removeItem('instant_print_job');
+    }
+  }, [printJobDetails]);
 
   // View Mode: false = Kiosk Display, true = Mobile Companion Screen
   const [isMobileMode, setIsMobileMode] = useState(false);
@@ -25,6 +81,10 @@ export function App() {
 
   // Handlers
   const handleResetSession = () => {
+    sessionStorage.removeItem('instant_print_step');
+    sessionStorage.removeItem('instant_print_user');
+    sessionStorage.removeItem('instant_print_docs');
+    sessionStorage.removeItem('instant_print_job');
     setCurrentStep('landing');
     setCurrentUser(null);
     setDocuments([]);
