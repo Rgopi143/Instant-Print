@@ -9,10 +9,11 @@ import DocumentPreview from './components/DocumentPreview';
 import PrintConfigForm from './components/PrintConfigForm';
 import PaymentScreen from './components/PaymentScreen';
 import PrintAnimation from './components/PrintAnimation';
+import AdminDashboard from './components/AdminDashboard';
 import IdleTimer from './components/IdleTimer';
 
 export function App() {
-  // Step Machine: 'landing' | 'auth' | 'upload' | 'preview' | 'config' | 'payment' | 'printing'
+  // Step Machine: 'landing' | 'auth' | 'admin' | 'upload' | 'preview' | 'config' | 'payment' | 'printing'
   const [currentStep, setCurrentStep] = useState('landing');
   const [currentUser, setCurrentUser] = useState(null);
   const [documents, setDocuments] = useState([]);
@@ -33,7 +34,11 @@ export function App() {
 
   const handleStartLanding = () => {
     if (currentUser) {
-      setCurrentStep('upload');
+      if (currentUser.isAdmin) {
+        setCurrentStep('admin');
+      } else {
+        setCurrentStep('upload');
+      }
     } else {
       setCurrentStep('auth');
     }
@@ -51,7 +56,11 @@ export function App() {
 
   const handleLoginSuccess = (userData) => {
     setCurrentUser(userData);
-    setCurrentStep('upload');
+    if (userData.isAdmin) {
+      setCurrentStep('admin');
+    } else {
+      setCurrentStep('upload');
+    }
   };
 
   const handleGuestContinue = () => {
@@ -100,6 +109,14 @@ export function App() {
         <AuthScreen
           onLoginSuccess={handleLoginSuccess}
           onGuestContinue={handleGuestContinue}
+        />
+      )}
+
+      {currentStep === 'admin' && (
+        <AdminDashboard
+          user={currentUser}
+          onExit={handleResetSession}
+          onProceedUpload={() => setCurrentStep('upload')}
         />
       )}
 

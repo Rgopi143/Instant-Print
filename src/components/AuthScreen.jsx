@@ -9,12 +9,14 @@ const AuthScreen = ({ onLoginSuccess, onGuestContinue }) => {
   const [phone, setPhone] = useState('');
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
   const [pin, setPin] = useState(['', '', '', '', '', '']);
+  const [pinError, setPinError] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleSendOTP = (e) => {
     if (e) e.preventDefault();
     if (!phone || phone.length < 7) return;
     audioFX.playButtonClick();
+    setPinError('');
     setLoading(true);
 
     setTimeout(() => {
@@ -42,6 +44,7 @@ const AuthScreen = ({ onLoginSuccess, onGuestContinue }) => {
 
   const handlePinChange = (index, value) => {
     if (!/^\d*$/.test(value)) return;
+    if (pinError) setPinError('');
     const newPin = [...pin];
     newPin[index] = value.slice(-1);
     setPin(newPin);
@@ -70,15 +73,22 @@ const AuthScreen = ({ onLoginSuccess, onGuestContinue }) => {
   const handleVerifyPin = (e) => {
     if (e) e.preventDefault();
     audioFX.playButtonClick();
+    setPinError('');
     setLoading(true);
+
+    const enteredPin = pin.join('');
     setTimeout(() => {
       setLoading(false);
-      onLoginSuccess({
-        phone: "+91 " + phone,
-        userType: "System Administrator",
-        walletBalance: "Unlimited (Admin)",
-        isAdmin: true,
-      });
+      if (enteredPin === '824782') {
+        onLoginSuccess({
+          phone: "+91 " + phone,
+          userType: "System Administrator",
+          walletBalance: "Unlimited (Admin)",
+          isAdmin: true,
+        });
+      } else {
+        setPinError('Invalid Admin PIN. Please enter correct 6-digit PIN.');
+      }
     }, 600);
   };
 
@@ -231,10 +241,18 @@ const AuthScreen = ({ onLoginSuccess, onGuestContinue }) => {
                     maxLength={1}
                     value={digit}
                     onChange={(e) => handlePinChange(idx, e.target.value)}
-                    className="w-10 sm:w-11 h-12 sm:h-13 text-center text-xl font-bold bg-slate-50 border border-slate-300 focus:border-amber-500 focus:bg-white text-slate-950 rounded-xl focus:outline-none transition-all"
+                    className={`w-10 sm:w-11 h-12 sm:h-13 text-center text-xl font-bold bg-slate-50 border ${
+                      pinError ? 'border-rose-500 bg-rose-50' : 'border-slate-300 focus:border-amber-500'
+                    } focus:bg-white text-slate-950 rounded-xl focus:outline-none transition-all`}
                   />
                 ))}
               </div>
+
+              {pinError && (
+                <p className="text-xs font-semibold text-rose-600 animate-bounce">
+                  {pinError}
+                </p>
+              )}
 
               <button
                 type="submit"
