@@ -30,10 +30,12 @@ const DocumentPreview = ({ documents, onRemoveDocument, onAddMore, onProceedToCo
             audioFX.playButtonClick();
             onAddMore();
           }}
-          className="flex items-center gap-1.5 px-3 sm:px-3.5 py-2 rounded-xl bg-white hover:bg-slate-50 border border-slate-300 text-slate-700 text-xs font-semibold transition-colors shadow-sm shrink-0 whitespace-nowrap"
+          className="flex items-center gap-1.5 px-2.5 sm:px-3.5 py-2 rounded-xl bg-white hover:bg-slate-50 border border-slate-300 text-slate-700 text-xs font-semibold transition-colors shadow-sm shrink-0 whitespace-nowrap"
+          title="Add More Files"
+          aria-label="Add More Files"
         >
           <Plus className="w-4 h-4 text-cyan-600 shrink-0" />
-          <span>Add More Files</span>
+          <span className="hidden sm:inline">Add More Files</span>
         </button>
       </div>
 
