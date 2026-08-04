@@ -8,8 +8,6 @@ const AuthScreen = ({ onLoginSuccess, onGuestContinue }) => {
   const [step, setStep] = useState('phone');
   const [phone, setPhone] = useState('');
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
-  const [generatedOtp, setGeneratedOtp] = useState('');
-  const [showSmsToast, setShowSmsToast] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const handleSendOTP = (e) => {
@@ -18,23 +16,10 @@ const AuthScreen = ({ onLoginSuccess, onGuestContinue }) => {
     audioFX.playButtonClick();
     setLoading(true);
 
-    // Generate random 6-digit OTP
-    const newOtp = Math.floor(100000 + Math.random() * 900000).toString();
-    setGeneratedOtp(newOtp);
-
     setTimeout(() => {
       setLoading(false);
       setStep('otp');
-      setShowSmsToast(true);
-      audioFX.playSuccessChime();
-    }, 700);
-  };
-
-  const handleAutofillOtp = () => {
-    audioFX.playButtonClick();
-    if (generatedOtp && generatedOtp.length === 6) {
-      setOtp(generatedOtp.split(''));
-    }
+    }, 600);
   };
 
   const handleOtpChange = (index, value) => {
@@ -66,43 +51,6 @@ const AuthScreen = ({ onLoginSuccess, onGuestContinue }) => {
 
   return (
     <div className="relative z-10 flex flex-col items-center justify-center min-h-[calc(100vh-100px)] px-4 py-8 max-w-md mx-auto">
-      
-      {/* Simulated Instant Print 24/7 SMS Toast Notification Banner */}
-      <AnimatePresence>
-        {showSmsToast && generatedOtp && (
-          <motion.div
-            initial={{ opacity: 0, y: -40, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -30, scale: 0.95 }}
-            className="w-full mb-4 bg-slate-900 text-white p-4 rounded-2xl border border-cyan-500/50 shadow-2xl shadow-cyan-500/20 text-left"
-          >
-            <div className="flex items-start gap-3">
-              <div className="p-2 rounded-xl bg-cyan-500/20 text-cyan-400 shrink-0">
-                <Bell className="w-5 h-5 animate-bounce" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center justify-between text-[11px] text-cyan-300 font-semibold mb-0.5">
-                  <span>SMS • Instant Print 24/7</span>
-                  <span className="text-slate-400">Just Now</span>
-                </div>
-                <p className="text-xs text-slate-200 leading-snug">
-                  Your OTP for <span className="font-bold text-white">Instant Print 24/7</span> is <span className="font-mono text-cyan-300 font-extrabold text-sm px-1.5 py-0.5 bg-slate-800 rounded border border-cyan-500/30">{generatedOtp}</span>. Valid for 10 mins.
-                </p>
-
-                <button
-                  type="button"
-                  onClick={handleAutofillOtp}
-                  className="mt-2.5 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-extrabold text-xs transition-colors shadow-sm active:scale-95"
-                >
-                  <CheckCircle2 className="w-3.5 h-3.5" />
-                  <span>Tap to Auto-fill ({generatedOtp})</span>
-                </button>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
