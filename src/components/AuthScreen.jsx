@@ -66,10 +66,7 @@ const AuthScreen = ({ onLoginSuccess, onGuestContinue }) => {
               </div>
             </div>
 
-            <h2 className="text-2xl font-bold text-slate-900">New Registration</h2>
-            <p className="text-xs text-slate-500 mb-4">
-              Enter your mobile number to receive 6-digit OTP SMS from Instant Print 24/7.
-            </p>
+            <h2 className="text-2xl font-bold text-slate-900 mb-4">New Registration</h2>
 
             <form onSubmit={handleSendOTP} className="space-y-4">
               <div>
