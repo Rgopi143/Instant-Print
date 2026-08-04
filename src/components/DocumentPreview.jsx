@@ -17,7 +17,7 @@ const DocumentPreview = ({ documents, onRemoveDocument, onAddMore, onProceedToCo
               AI Document Analysis
             </h2>
             <span className="px-2.5 py-0.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-700 text-xs font-semibold shrink-0">
-              {documents.length} File{documents.length > 1 ? 's' : ''} Ready
+              {documents.length}<span className="hidden sm:inline"> File{documents.length > 1 ? 's' : ''} Ready</span>
             </span>
           </div>
           <p className="text-[11px] sm:text-xs text-slate-500 mt-1 truncate sm:whitespace-normal">
