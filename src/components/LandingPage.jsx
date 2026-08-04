@@ -17,7 +17,7 @@ const LandingPage = ({ onStart }) => {
         <img
           src="/RANBIDGE SOLUTIONS PRIVATE LIMITED.PNG"
           alt="Ranbidge Solutions Private Limited"
-          className="h-28 sm:h-36 md:h-48 object-contain mx-auto drop-shadow-md"
+          className="h-40 sm:h-56 md:h-72 max-w-full object-contain mx-auto drop-shadow-lg"
         />
       </motion.div>
 
