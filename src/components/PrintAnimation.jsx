@@ -126,7 +126,7 @@ const PrintAnimation = ({ printJobDetails, onFinish }) => {
             </div>
             <div className="flex justify-between">
               <span>Security Status:</span>
-              <span className="text-emerald-700 font-semibold">Files Shredded from Kiosk Storage</span>
+              <span className="text-emerald-700 font-semibold">Files Are Stored in Your Profile</span>
             </div>
           </div>
 
