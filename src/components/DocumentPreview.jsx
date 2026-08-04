@@ -124,7 +124,6 @@ const DocumentPreview = ({ documents, onRemoveDocument, onAddMore, onProceedToCo
         >
           <Sliders className="w-5 h-5" />
           <span>Configure Print Settings</span>
-          <ArrowRight className="w-5 h-5" />
         </button>
       </div>
 

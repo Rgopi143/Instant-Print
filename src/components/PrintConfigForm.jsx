@@ -324,7 +324,6 @@ const PrintConfigForm = ({ documents, onProceedToPayment }) => {
             className="w-full flex items-center justify-center gap-2 py-4 rounded-2xl bg-gradient-to-r from-emerald-600 to-cyan-600 hover:opacity-95 text-white font-black text-base shadow-xl shadow-emerald-600/20 transition-all active:scale-95"
           >
             <span>Proceed to Payment</span>
-            <ArrowRight className="w-5 h-5" />
           </button>
         </div>
 
