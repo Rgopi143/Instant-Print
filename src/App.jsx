@@ -9,20 +9,21 @@ import PrintConfigForm from './components/PrintConfigForm';
 import PaymentScreen from './components/PaymentScreen';
 import PrintAnimation from './components/PrintAnimation';
 import AdminDashboard from './components/AdminDashboard';
+import CustomerDashboard from './components/CustomerDashboard';
 import IdleTimer from './components/IdleTimer';
+import { recordLoginLog, createPrintOrder } from './firebase/firestoreService';
 
 export function App() {
   // Step Machine: 'landing' | 'auth' | 'admin' | 'upload' | 'preview' | 'config' | 'payment' | 'printing'
   const [currentStep, setCurrentStep] = useState(() => {
     const savedStep = sessionStorage.getItem('instant_print_step');
-    return savedStep === 'admin' ? 'landing' : (savedStep || 'landing');
+    return savedStep || 'landing';
   });
 
   const [currentUser, setCurrentUser] = useState(() => {
     try {
       const saved = sessionStorage.getItem('instant_print_user');
-      const parsedUser = saved ? JSON.parse(saved) : null;
-      return parsedUser?.isAdmin ? null : parsedUser;
+      return saved ? JSON.parse(saved) : null;
     } catch {
       return null;
     }
@@ -46,17 +47,17 @@ export function App() {
     }
   });
 
-  // Save state updates to sessionStorage (Persist Customer sessions ONLY, Exclude Admin for Security)
+  // Save state updates to sessionStorage
   useEffect(() => {
-    if (currentStep === 'admin') {
-      sessionStorage.removeItem('instant_print_step');
-    } else {
+    if (currentStep) {
       sessionStorage.setItem('instant_print_step', currentStep);
+    } else {
+      sessionStorage.removeItem('instant_print_step');
     }
   }, [currentStep]);
 
   useEffect(() => {
-    if (currentUser && !currentUser.isAdmin) {
+    if (currentUser) {
       sessionStorage.setItem('instant_print_user', JSON.stringify(currentUser));
     } else {
       sessionStorage.removeItem('instant_print_user');
@@ -102,7 +103,7 @@ export function App() {
       if (currentUser.isAdmin) {
         setCurrentStep('admin');
       } else {
-        setCurrentStep('upload');
+        setCurrentStep('customer');
       }
     } else {
       setCurrentStep('auth');
@@ -116,20 +117,33 @@ export function App() {
       userType: "Mobile Paired Session",
       sessionId,
     });
-    setCurrentStep('upload');
+    setCurrentStep('customer');
   };
 
   const handleLoginSuccess = (userData) => {
     setCurrentUser(userData);
+    recordLoginLog({
+      phone: userData.phone || '+91 Customer',
+      type: userData.isAdmin ? 'Admin 6-Digit PIN' : 'SMS OTP Verified',
+      role: userData.isAdmin ? 'System Admin' : 'Verified Customer',
+      status: 'Active Session'
+    });
     if (userData.isAdmin) {
       setCurrentStep('admin');
     } else {
-      setCurrentStep('upload');
+      setCurrentStep('customer');
     }
   };
 
   const handleGuestContinue = () => {
-    setCurrentUser({ userType: "Guest User" });
+    const guestData = { userType: "Guest User", phone: "Guest User" };
+    setCurrentUser(guestData);
+    recordLoginLog({
+      phone: "Guest User",
+      type: "Direct Guest Session",
+      role: "Guest Customer",
+      status: "Active Session"
+    });
     setCurrentStep('upload');
   };
 
@@ -158,6 +172,17 @@ export function App() {
   };
 
   const handlePaymentSuccess = () => {
+    if (documents.length > 0) {
+      const firstDoc = documents[0] || {};
+      createPrintOrder({
+        name: firstDoc.name || 'Print_Document.pdf',
+        pages: printJobDetails?.totalPages || firstDoc.pages || 1,
+        mode: printJobDetails?.colorMode === 'color' ? 'Color Single-Sided' : 'B&W Double-Sided',
+        cost: printJobDetails?.totalCost ? `₹${printJobDetails.totalCost}` : '₹6.00',
+        phone: currentUser?.phone || 'Guest User',
+        category: firstDoc.name?.endsWith('.jpg') || firstDoc.name?.endsWith('.png') ? 'Photo' : 'PDF'
+      });
+    }
     setCurrentStep('printing');
   };
 
@@ -185,8 +210,20 @@ export function App() {
         />
       )}
 
+      {currentStep === 'customer' && (
+        <CustomerDashboard
+          user={currentUser}
+          onExit={handleResetSession}
+          onProceedUpload={() => setCurrentStep('upload')}
+        />
+      )}
+
       {currentStep === 'upload' && (
-        <DocumentUploader onDocumentsProcessed={handleDocumentsProcessed} />
+        <DocumentUploader 
+          onDocumentsProcessed={handleDocumentsProcessed} 
+          onBackToAdmin={currentUser ? () => setCurrentStep(currentUser.isAdmin ? 'admin' : 'customer') : null}
+          isAdmin={currentUser?.isAdmin}
+        />
       )}
 
       {currentStep === 'preview' && (
@@ -227,9 +264,9 @@ export function App() {
       {/* Background Animated Canvas */}
       <BackgroundFX />
 
-      {/* Global Idle Reset Safety Timer (Active on all screens except landing) */}
+      {/* Global Idle Reset Safety Timer (Active on all screens except landing and admin) */}
       <IdleTimer
-        isActive={currentStep !== 'landing'}
+        isActive={currentStep !== 'landing' && currentStep !== 'admin'}
         onReset={handleResetSession}
       />
 

@@ -1,10 +1,10 @@
 import React, { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { UploadCloud, FileText, Image, FileCode, CheckCircle, Sparkles, File, Plus } from 'lucide-react';
+import { UploadCloud, FileText, Image, FileCode, CheckCircle, Sparkles, File, Plus, ShieldCheck } from 'lucide-react';
 import { analyzeDocumentWithAI } from '../utils/aiPredictor';
 import { audioFX } from '../utils/audioFX';
 
-const DocumentUploader = ({ onDocumentsProcessed }) => {
+const DocumentUploader = ({ onDocumentsProcessed, onBackToAdmin, isAdmin }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const fileInputRef = useRef(null);
@@ -65,6 +65,22 @@ const DocumentUploader = ({ onDocumentsProcessed }) => {
 
   return (
     <div className="relative z-10 w-full max-w-4xl mx-auto px-4 py-6">
+      
+      {/* Return to Dashboard Button (if opened from Dashboard) */}
+      {onBackToAdmin && (
+        <div className="mb-4">
+          <button
+            onClick={() => {
+              audioFX.playButtonClick();
+              onBackToAdmin();
+            }}
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-white hover:bg-cyan-50 border border-slate-200 hover:border-cyan-300 text-slate-800 hover:text-cyan-900 font-bold text-xs shadow-md transition-all active:scale-95 group"
+          >
+            <ShieldCheck className="w-4 h-4 text-cyan-600 group-hover:scale-110 transition-transform" />
+            <span>{isAdmin ? "Return to Admin Dashboard" : "Return to Dashboard"}</span>
+          </button>
+        </div>
+      )}
       
       {/* Title Header */}
       <div className="text-center mb-6">

@@ -1,0 +1,30 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Print Orders: Anyone can create; read open for demo portal
+    match /print_orders/{orderId} {
+      allow create: if request.resource.data.pages > 0;
+      allow read: if true;
+      allow update, delete: if true;
+    }
+
+    // Login Logs: Anyone can log login events
+    match /user_login_logs/{logId} {
+      allow create: if true;
+      allow read: if true;
+      allow update, delete: if true;
+    }
+
+    // Users Collection
+    match /users/{phone} {
+      allow read, write: if true;
+    }
+
+    // Kiosk Hardware Status
+    match /kiosk_hardware_status/{kioskId} {
+      allow read: if true;
+      allow write: if true;
+    }
+  }
+}
