@@ -10,17 +10,19 @@ const DocumentPreview = ({ documents, onRemoveDocument, onAddMore, onProceedToCo
     <div className="relative z-10 w-full max-w-4xl mx-auto px-4 py-6">
       
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-        <div>
+      <div className="flex items-center justify-between gap-3 mb-6">
+        <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
-            <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900">
+            <h2 className="text-lg sm:text-2xl font-extrabold text-slate-900 truncate">
               AI Document Analysis
             </h2>
-            <span className="px-2.5 py-0.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-700 text-xs font-semibold">
+            <span className="px-2.5 py-0.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-700 text-xs font-semibold shrink-0">
               {documents.length} File{documents.length > 1 ? 's' : ''} Ready
             </span>
           </div>
-          <p className="text-xs text-slate-500 mt-1">Review AI categorized details before configuring print options.</p>
+          <p className="text-[11px] sm:text-xs text-slate-500 mt-1 truncate sm:whitespace-normal">
+            Review AI categorized details before configuring print options.
+          </p>
         </div>
 
         <button
@@ -28,9 +30,9 @@ const DocumentPreview = ({ documents, onRemoveDocument, onAddMore, onProceedToCo
             audioFX.playButtonClick();
             onAddMore();
           }}
-          className="self-start sm:self-auto flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white hover:bg-slate-50 border border-slate-300 text-slate-700 text-xs font-semibold transition-colors shadow-sm"
+          className="flex items-center gap-1.5 px-3 sm:px-3.5 py-2 rounded-xl bg-white hover:bg-slate-50 border border-slate-300 text-slate-700 text-xs font-semibold transition-colors shadow-sm shrink-0 whitespace-nowrap"
         >
-          <Plus className="w-4 h-4 text-cyan-600" />
+          <Plus className="w-4 h-4 text-cyan-600 shrink-0" />
           <span>Add More Files</span>
         </button>
       </div>
