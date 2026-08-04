@@ -208,23 +208,6 @@ const AdminDashboard = ({ user, onExit, onProceedUpload }) => {
           {/* SECTION 1: OVERVIEW TAB */}
           {(activeTab === 'overview' || activeTab === 'all') && (
             <div className="space-y-6 mb-6">
-              
-              {/* Top Banner Overview */}
-              <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-xl shadow-slate-200/50 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                <div>
-                  <h1 className="text-2xl font-black text-slate-900">Dashboard Overview</h1>
-                  <p className="text-xs text-slate-500 mt-1">
-                    Real-time telemetry, user session tracking, & hardware status.
-                  </p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="px-3 py-1 rounded-full bg-cyan-50 border border-cyan-200 text-cyan-700 text-xs font-bold flex items-center gap-1.5">
-                    <Activity className="w-3.5 h-3.5" />
-                    Terminal #402 Healthy
-                  </span>
-                </div>
-              </div>
-
               {/* Key Metrics Grid */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 
