@@ -454,42 +454,38 @@ const CustomerDashboard = ({ user, onExit, onProceedUpload }) => {
         /* VIEW MODE 2: DASHBOARD OVERVIEW VIEW */
         <>
           {/* Customer Header */}
-          <header className="w-full bg-white p-4 sm:p-5 rounded-3xl border border-slate-200/90 shadow-xl shadow-slate-200/50 mb-6 flex flex-wrap items-center justify-between gap-4">
+          <header className="w-full bg-white p-3.5 sm:p-5 rounded-2xl sm:rounded-3xl border border-slate-200/90 shadow-xl shadow-slate-200/50 mb-6 flex items-center justify-between gap-2 sm:gap-4 overflow-hidden">
             
-            <div className="flex items-center gap-3 shrink-0">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-cyan-500 to-violet-600 border border-cyan-400/30 flex items-center justify-center text-white shadow-md shrink-0">
-                <UserCheck className="w-6 h-6" />
+            <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-gradient-to-tr from-cyan-500 to-violet-600 border border-cyan-400/30 flex items-center justify-center text-white shadow-md shrink-0">
+                <UserCheck className="w-5 h-5 sm:w-6 sm:h-6" />
               </div>
-              <div>
-                <div className="flex items-center gap-2">
-                  <h2 className="font-black text-slate-900 text-lg leading-tight">
-                    {(() => {
-                      const hour = new Date().getHours();
-                      const greeting = hour >= 5 && hour < 12 ? 'Good Morning' : hour >= 12 && hour < 17 ? 'Good Afternoon' : hour >= 17 && hour < 22 ? 'Good Evening' : 'Good Night';
-                      const displayName = user?.name ? user.name : (user?.phone || 'Customer');
-                      return `${greeting}, ${displayName}!`;
-                    })()}
-                  </h2>
-                  <span className="px-2 py-0.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 font-bold text-[10px]">
-                    Verified Account
-                  </span>
-                </div>
-                <p className="text-xs text-slate-500 mt-0.5">
+              <div className="min-w-0">
+                <h2 className="font-black text-slate-900 text-xs sm:text-lg leading-tight truncate">
+                  {(() => {
+                    const hour = new Date().getHours();
+                    const greeting = hour >= 5 && hour < 12 ? 'Good Morning' : hour >= 12 && hour < 17 ? 'Good Afternoon' : hour >= 17 && hour < 22 ? 'Good Evening' : 'Good Night';
+                    const displayName = user?.name ? user.name : (user?.phone || 'Guest User');
+                    return `${greeting}, ${displayName}!`;
+                  })()}
+                </h2>
+                <p className="text-[10px] sm:text-xs text-slate-500 mt-0.5 truncate">
                   {user?.name && user?.phone ? `${user.phone} • ` : ''}Instant Print Customer Portal
                 </p>
               </div>
             </div>
 
-            <div className="flex items-center gap-2.5">
+            <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0 ml-auto">
               <button
                 onClick={() => {
                   audioFX.playButtonClick();
                   onProceedUpload();
                 }}
-                className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-gradient-to-r from-cyan-600 to-violet-600 hover:from-cyan-700 hover:to-violet-700 text-white font-bold text-xs shadow-lg shadow-cyan-600/20 transition-all active:scale-95"
+                className="flex items-center gap-1.5 px-3 py-2 sm:px-4 sm:py-2.5 rounded-xl sm:rounded-2xl bg-gradient-to-r from-cyan-600 to-violet-600 hover:from-cyan-700 hover:to-violet-700 text-white font-bold text-xs shadow-md transition-all active:scale-95"
               >
                 <UploadCloud className="w-4 h-4" />
-                <span>Upload New Document</span>
+                <span className="hidden sm:inline">Upload New Document</span>
+                <span className="sm:hidden text-[11px]">Upload</span>
               </button>
 
               <button
@@ -498,9 +494,9 @@ const CustomerDashboard = ({ user, onExit, onProceedUpload }) => {
                   audioFX.playButtonClick();
                   onExit();
                 }}
-                className="flex items-center justify-center p-2.5 rounded-2xl bg-slate-100 hover:bg-rose-50 border border-slate-200 text-slate-700 hover:text-rose-600 transition-all active:scale-95"
+                className="flex items-center justify-center p-2 sm:p-2.5 rounded-xl sm:rounded-2xl bg-slate-100 hover:bg-rose-50 border border-slate-200 text-slate-700 hover:text-rose-600 transition-all active:scale-95"
               >
-                <LogOut className="w-4.5 h-4.5" />
+                <LogOut className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
               </button>
             </div>
 
@@ -619,16 +615,16 @@ const CustomerDashboard = ({ user, onExit, onProceedUpload }) => {
               </div>
             </div>
 
-            {/* Overview Table */}
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs">
+            {/* Desktop Table View */}
+            <div className="hidden sm:block overflow-x-auto">
+              <table className="w-full text-left text-xs align-middle">
                 <thead>
                   <tr className="border-b border-slate-200 text-slate-400 font-bold uppercase text-[10px] tracking-wider">
-                    <th className="pb-3">Order ID</th>
-                    <th className="pb-3">Document Name</th>
-                    <th className="pb-3">Date & Time</th>
-                    <th className="pb-3">Amount</th>
-                    <th className="pb-3 text-center">Status</th>
+                    <th className="pb-3 whitespace-nowrap pr-3">Order ID</th>
+                    <th className="pb-3 pr-3">Document Name</th>
+                    <th className="pb-3 whitespace-nowrap pr-3">Date & Time</th>
+                    <th className="pb-3 whitespace-nowrap pr-3 text-right">Amount</th>
+                    <th className="pb-3 text-center whitespace-nowrap pl-3">Status</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
@@ -642,14 +638,13 @@ const CustomerDashboard = ({ user, onExit, onProceedUpload }) => {
                         }}
                         className="hover:bg-cyan-50/50 transition-colors cursor-pointer group"
                       >
-                        <td className="py-4 font-bold font-mono text-cyan-700 group-hover:underline">{order.orderId || order.id}</td>
-                        <td className="py-4 font-semibold text-slate-900 flex items-center gap-2">
-                          <FileText className="w-4 h-4 text-slate-400 shrink-0" />
-                          <span className="truncate max-w-[200px]">{order.name}</span>
+                        <td className="py-4 font-bold font-mono text-cyan-700 group-hover:underline whitespace-nowrap align-middle">{order.orderId || order.id}</td>
+                        <td className="py-4 font-semibold text-slate-900 align-middle">
+                          <span className="truncate max-w-[200px] block">{order.name}</span>
                         </td>
-                        <td className="py-4 text-slate-500">{order.date}</td>
-                        <td className="py-4 font-bold text-slate-900">{order.cost}</td>
-                        <td className="py-4 text-center">
+                        <td className="py-4 text-slate-500 whitespace-nowrap align-middle">{order.date}</td>
+                        <td className="py-4 font-bold text-slate-900 whitespace-nowrap align-middle text-right">{order.cost}</td>
+                        <td className="py-4 text-center whitespace-nowrap align-middle">
                           <span className="inline-flex items-center justify-center p-1 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-600" title={order.status || 'Completed'}>
                             <CheckCircle2 className="w-4 h-4" />
                           </span>
@@ -669,6 +664,42 @@ const CustomerDashboard = ({ user, onExit, onProceedUpload }) => {
                   )}
                 </tbody>
               </table>
+            </div>
+
+            {/* Mobile Card List View */}
+            <div className="block sm:hidden space-y-2.5">
+              {filteredHistory.length > 0 ? (
+                filteredHistory.slice(0, 5).map((order) => (
+                  <div
+                    key={order.id}
+                    onClick={() => {
+                      audioFX.playButtonClick();
+                      setSelectedOrder(order);
+                    }}
+                    className="p-3.5 rounded-2xl bg-slate-50 hover:bg-cyan-50/60 border border-slate-200 flex flex-col gap-2 cursor-pointer transition-colors active:scale-[0.98]"
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="font-bold font-mono text-cyan-700 text-xs">{order.orderId || order.id}</span>
+                      <span className="font-black text-slate-900 text-xs">{order.cost}</span>
+                    </div>
+
+                    <div className="font-semibold text-slate-900 text-xs break-words">{order.name}</div>
+
+                    <div className="flex items-center justify-between text-[11px] pt-1.5 border-t border-slate-200/80">
+                      <span className="text-slate-500">{order.date}</span>
+                      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 font-bold text-[10px]">
+                        <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                        Completed
+                      </span>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="py-8 text-center text-slate-400">
+                  <p className="font-semibold text-slate-600 text-xs">No recent print jobs found</p>
+                  <p className="text-[10px] text-slate-400 mt-0.5">Upload a document to create your first order.</p>
+                </div>
+              )}
             </div>
 
           </div>
