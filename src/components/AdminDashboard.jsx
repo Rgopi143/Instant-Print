@@ -225,15 +225,15 @@ const AdminDashboard = ({ user, onExit, onProceedUpload }) => {
             </span>
           </div>
 
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto max-h-[380px] overflow-y-auto pr-1">
             <table className="w-full text-left text-xs">
-              <thead>
+              <thead className="sticky top-0 bg-white z-10">
                 <tr className="border-b border-slate-200 text-slate-400 font-bold uppercase text-[10px] tracking-wider">
-                  <th className="pb-3">Order ID</th>
-                  <th className="pb-3">Time & Date</th>
-                  <th className="pb-3">Document / Pages</th>
-                  <th className="pb-3">Cost</th>
-                  <th className="pb-3 text-center">Status</th>
+                  <th className="pb-3 bg-white">Order ID</th>
+                  <th className="pb-3 bg-white">Time & Date</th>
+                  <th className="pb-3 bg-white">Document / Pages</th>
+                  <th className="pb-3 bg-white">Cost</th>
+                  <th className="pb-3 text-center bg-white">Status</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
@@ -283,14 +283,14 @@ const AdminDashboard = ({ user, onExit, onProceedUpload }) => {
             </span>
           </div>
 
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto max-h-[380px] overflow-y-auto pr-1">
             <table className="w-full text-left text-xs">
-              <thead>
+              <thead className="sticky top-0 bg-white z-10">
                 <tr className="border-b border-slate-200 text-slate-400 font-bold uppercase text-[10px] tracking-wider">
-                  <th className="pb-3">User Contact</th>
-                  <th className="pb-3 text-center">Login Method</th>
-                  <th className="pb-3">Time</th>
-                  <th className="pb-3 text-center">Role</th>
+                  <th className="pb-3 bg-white">User Contact</th>
+                  <th className="pb-3 text-center bg-white">Login Method</th>
+                  <th className="pb-3 bg-white">Time</th>
+                  <th className="pb-3 text-center bg-white">Role</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">

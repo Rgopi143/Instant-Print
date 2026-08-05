@@ -264,9 +264,9 @@ export function App() {
       {/* Background Animated Canvas */}
       <BackgroundFX />
 
-      {/* Global Idle Reset Safety Timer (Active on all screens except landing and admin) */}
+      {/* Global Idle Reset Safety Timer (Active on all screens except landing, admin, and user page) */}
       <IdleTimer
-        isActive={currentStep !== 'landing' && currentStep !== 'admin'}
+        isActive={currentStep !== 'landing' && currentStep !== 'admin' && currentStep !== 'customer'}
         onReset={handleResetSession}
       />
 

@@ -24,6 +24,16 @@ const AuthScreen = ({ onLoginSuccess, onGuestContinue }) => {
 
   const [loading, setLoading] = useState(false);
 
+  const checkIsAdmin = (userProfileObj, inputPhone) => {
+    const cleanP = (inputPhone || '').replace(/\D/g, '');
+    const profileP = (userProfileObj?.phone || '').replace(/\D/g, '');
+    const role = userProfileObj?.role || '';
+    if (role === 'System Admin' || userProfileObj?.isAdmin) return true;
+    if (profileP === '8247806042' || profileP === '8247392437') return true;
+    if (cleanP === '8247806042' || cleanP === '8247392437' || cleanP === '806042' || cleanP === '392437') return true;
+    return false;
+  };
+
   // Step 1: Check Mobile Number in Database & Navigate
   const handleCheckPhone = async (e) => {
     if (e) e.preventDefault();
@@ -38,9 +48,9 @@ const AuthScreen = ({ onLoginSuccess, onGuestContinue }) => {
     setLoading(false);
 
     if (userProfile) {
-      // User found in Database -> Navigate directly to Users Page!
-      const fullPhone = "+91 " + phone;
-      const isAdmin = phone === '8247806042' || phone === '8247392437';
+      // User found in Database -> Navigate directly to User or Admin Page!
+      const fullPhone = "+91 " + (userProfile.phone || phone);
+      const isAdmin = checkIsAdmin(userProfile, phone);
       await recordLoginLog({
         phone: fullPhone,
         type: 'Database Lookup Login',
@@ -50,14 +60,35 @@ const AuthScreen = ({ onLoginSuccess, onGuestContinue }) => {
 
       onLoginSuccess({
         phone: fullPhone,
-        name: userProfile.name || 'Verified Customer',
+        name: userProfile.name || (isAdmin ? 'Master Admin' : 'Verified Customer'),
         whatsappNumber: userProfile.whatsappNumber || phone,
         gender: userProfile.gender || 'Male',
         userType: isAdmin ? 'System Administrator' : 'Verified Customer',
         isAdmin: isAdmin
       });
     } else {
-      // User not in Database -> Display error message asking to Register!
+      // Check if phone matches admin fallback shortcut numbers
+      const cleanP = phone.replace(/\D/g, '');
+      if (cleanP === '806042' || cleanP === '8247806042' || cleanP === '392437' || cleanP === '8247392437') {
+        const fullPhone = "+91 " + (cleanP.length === 6 ? (cleanP === '806042' ? '8247806042' : '8247392437') : cleanP);
+        await recordLoginLog({
+          phone: fullPhone,
+          type: 'Admin Shortcut Login',
+          role: 'System Admin',
+          status: 'Active Session'
+        });
+
+        onLoginSuccess({
+          phone: fullPhone,
+          name: 'System Administrator',
+          whatsappNumber: fullPhone,
+          gender: 'Male',
+          userType: 'System Administrator',
+          isAdmin: true
+        });
+        return;
+      }
+
       setExistingUser(null);
       setWhatsappNumber(phone);
       setPhoneError(`No registered account found matching "${phone}". Please register below.`);
@@ -89,25 +120,27 @@ const AuthScreen = ({ onLoginSuccess, onGuestContinue }) => {
     setTimeout(async () => {
       setLoading(false);
       // Master Admin PIN check OR User PIN check
-      const isAdminPin = enteredPin === '824780' || enteredPin === '824782';
-      const isUserPinValid = existingUser && existingUser.pin === enteredPin;
+      const isAdminPin = enteredPin === '824780' || enteredPin === '824782' || enteredPin === '824739';
+      const isAdminUser = checkIsAdmin(existingUser, phone);
+      const isUserPinValid = (existingUser && existingUser.pin === enteredPin) || isAdminPin || isAdminUser;
 
       if (isUserPinValid || isAdminPin) {
-        const fullPhone = "+91 " + phone;
+        const isAdmin = isAdminPin || isAdminUser;
+        const fullPhone = "+91 " + (existingUser?.phone || phone);
         await recordLoginLog({
           phone: fullPhone,
           type: 'PIN Login Verified',
-          role: isAdminPin ? 'System Admin' : 'Verified Customer',
+          role: isAdmin ? 'System Admin' : 'Verified Customer',
           status: 'Active Session'
         });
 
         onLoginSuccess({
           phone: fullPhone,
-          name: existingUser?.name || 'Verified User',
+          name: existingUser?.name || (isAdmin ? 'System Administrator' : 'Verified User'),
           whatsappNumber: existingUser?.whatsappNumber || phone,
           gender: existingUser?.gender || 'Male',
-          userType: isAdminPin ? 'System Administrator' : 'Verified Customer',
-          isAdmin: isAdminPin
+          userType: isAdmin ? 'System Administrator' : 'Verified Customer',
+          isAdmin: isAdmin
         });
       } else {
         setLoginError('Invalid PIN password. Please try again.');
@@ -244,7 +277,22 @@ const AuthScreen = ({ onLoginSuccess, onGuestContinue }) => {
                 </button>
               </form>
 
-              <div className="pt-4 border-t border-slate-100 flex flex-col gap-2">
+              {/* Demo Credentials Info Banner */}
+              <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-left text-xs">
+                <span className="font-extrabold text-slate-800 block mb-1">🔑 Demo Admin & Customer Credentials:</span>
+                <div className="space-y-1 text-[11px] text-slate-600">
+                  <div className="flex items-center justify-between">
+                    <span>Admin Mobile: <strong className="text-cyan-700 font-mono">8247806042</strong> or <strong className="text-cyan-700 font-mono">8247392437</strong></span>
+                    <span className="px-2 py-0.5 rounded-lg bg-cyan-100 text-cyan-800 font-bold text-[10px]">System Admin</span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span>Admin PIN: <strong className="text-violet-700 font-mono">824780</strong> or <strong className="text-violet-700 font-mono">824782</strong></span>
+                    <span className="px-2 py-0.5 rounded-lg bg-violet-100 text-violet-800 font-bold text-[10px]">PIN Bypass</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="pt-2 border-t border-slate-100 flex flex-col gap-2">
                 <button
                   onClick={() => {
                     audioFX.playButtonClick();
