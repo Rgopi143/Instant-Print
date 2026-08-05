@@ -269,21 +269,22 @@ const AdminDashboard = ({ user, onExit, onProceedUpload }) => {
     <div className="relative z-10 w-full max-w-7xl mx-auto px-4 py-6">
       
       {/* Top Header Bar */}
-      <header className="w-full bg-white p-4 sm:p-5 rounded-3xl border border-slate-200/90 shadow-xl shadow-slate-200/50 mb-6 flex items-center justify-between gap-4">
+      <header className="w-full bg-white p-3 sm:p-5 rounded-2xl sm:rounded-3xl border border-slate-200/90 shadow-xl shadow-slate-200/50 mb-6 flex items-center justify-between gap-2 sm:gap-4 overflow-hidden">
         
         {/* Left: Brand Info & Status */}
-        <div className="flex items-center gap-3 shrink-0">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-cyan-600 to-slate-900 border border-cyan-400/30 flex items-center justify-center text-white shadow-md shrink-0">
-            <ShieldCheck className="w-6 h-6 text-cyan-400" />
+        <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+          <div className="w-9 h-9 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-gradient-to-tr from-cyan-600 to-slate-900 border border-cyan-400/30 flex items-center justify-center text-white shadow-md shrink-0">
+            <ShieldCheck className="w-5 h-5 sm:w-6 sm:h-6 text-cyan-400" />
           </div>
-          <div>
-            <h2 className="font-black text-slate-900 text-lg leading-tight">INSTANT PRINT ADMIN</h2>
-            <p className="text-xs text-slate-500 mt-0.5">Self-Service Hardware & User Management</p>
+          <div className="min-w-0">
+            <h2 className="font-black text-slate-900 text-xs sm:text-lg leading-tight truncate">INSTANT PRINT ADMIN</h2>
+            <p className="text-[10px] sm:text-xs text-slate-500 mt-0.5 truncate hidden sm:block">Self-Service Hardware & User Management</p>
+            <p className="text-[9px] text-slate-500 mt-0.5 truncate sm:hidden">Admin Portal</p>
           </div>
         </div>
 
         {/* Right: User Profile & Actions (Aligned Inline on Right Side) */}
-        <div className="flex items-center gap-2 ml-auto shrink-0">
+        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
 
           <button
             title={`View Admin Profile Details (${user?.phone || 'Master Admin'})`}
@@ -291,9 +292,9 @@ const AdminDashboard = ({ user, onExit, onProceedUpload }) => {
               audioFX.playButtonClick();
               setShowProfileModal(true);
             }}
-            className="flex items-center justify-center p-2.5 rounded-2xl bg-cyan-50 hover:bg-cyan-100 border border-cyan-200 text-cyan-700 transition-all active:scale-95 shadow-xs"
+            className="flex items-center justify-center p-2 sm:p-2.5 rounded-xl sm:rounded-2xl bg-cyan-50 hover:bg-cyan-100 border border-cyan-200 text-cyan-700 transition-all active:scale-95 shadow-xs"
           >
-            <User className="w-4.5 h-4.5" />
+            <User className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
           </button>
 
           <button
@@ -302,12 +303,12 @@ const AdminDashboard = ({ user, onExit, onProceedUpload }) => {
               audioFX.playButtonClick();
               setShowUploadModal(true);
             }}
-            className="flex items-center justify-center p-2.5 rounded-2xl bg-gradient-to-r from-cyan-600 to-violet-600 hover:from-cyan-700 hover:to-violet-700 text-white font-bold transition-all shadow-md active:scale-95"
+            className="flex items-center justify-center p-2 sm:p-2.5 rounded-xl sm:rounded-2xl bg-gradient-to-r from-cyan-600 to-violet-600 hover:from-cyan-700 hover:to-violet-700 text-white font-bold transition-all shadow-md active:scale-95"
           >
-            <UploadCloud className="w-4.5 h-4.5" />
+            <UploadCloud className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
           </button>
 
-          <div className="h-6 w-px bg-slate-200 mx-1"></div>
+          <div className="h-5 sm:h-6 w-px bg-slate-200 mx-0.5 sm:mx-1"></div>
 
           <button
             title="Logout Admin"
@@ -315,9 +316,9 @@ const AdminDashboard = ({ user, onExit, onProceedUpload }) => {
               audioFX.playButtonClick();
               onExit();
             }}
-            className="flex items-center justify-center p-2.5 rounded-2xl bg-slate-100 hover:bg-rose-50 border border-slate-200 text-slate-700 hover:text-rose-600 transition-all active:scale-95"
+            className="flex items-center justify-center p-2 sm:p-2.5 rounded-xl sm:rounded-2xl bg-slate-100 hover:bg-rose-50 border border-slate-200 text-slate-700 hover:text-rose-600 transition-all active:scale-95"
           >
-            <LogOut className="w-4.5 h-4.5" />
+            <LogOut className="w-4 h-4 sm:w-4.5 sm:h-4.5" />
           </button>
         </div>
 
@@ -462,7 +463,8 @@ const AdminDashboard = ({ user, onExit, onProceedUpload }) => {
               </span>
             </div>
 
-            <div className="overflow-x-auto max-h-[380px] overflow-y-auto pr-1">
+            {/* Desktop Table View */}
+            <div className="hidden sm:block overflow-x-auto max-h-[380px] overflow-y-auto pr-1">
               <table className="w-full text-left text-xs align-middle">
                 <thead className="sticky top-0 bg-white z-10">
                   <tr className="border-b border-slate-200 text-slate-400 font-bold uppercase text-[10px] tracking-wider">
@@ -524,6 +526,41 @@ const AdminDashboard = ({ user, onExit, onProceedUpload }) => {
                   )}
                 </tbody>
               </table>
+            </div>
+
+            {/* Mobile Card List View */}
+            <div className="block sm:hidden space-y-2.5 max-h-[380px] overflow-y-auto pr-0.5">
+              {activeJobs.length > 0 ? (
+                activeJobs.map((job) => (
+                  <div
+                    key={job.id}
+                    onClick={() => {
+                      audioFX.playButtonClick();
+                      setPreviewJob(job);
+                    }}
+                    className="p-3.5 rounded-2xl bg-slate-50 hover:bg-cyan-50/60 border border-slate-200 flex flex-col gap-2 cursor-pointer transition-colors active:scale-[0.98]"
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="font-bold font-mono text-cyan-700 text-xs">{job.orderId || job.id}</span>
+                      <span className="font-black text-slate-900 text-xs">{job.cost}</span>
+                    </div>
+
+                    <div className="font-semibold text-slate-900 text-xs break-words">{job.name}</div>
+
+                    <div className="flex items-center justify-between text-[11px] pt-1.5 border-t border-slate-200/80">
+                      <span className="text-slate-500">{job.date || job.time}</span>
+                      <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 font-bold text-[10px]">
+                        <Eye className="w-3 h-3 text-emerald-600" />
+                        Preview
+                      </span>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="py-8 text-center text-slate-400">
+                  <p className="font-semibold text-slate-600 text-xs">No print jobs recorded</p>
+                </div>
+              )}
             </div>
           </div>
 
