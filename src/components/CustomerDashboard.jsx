@@ -125,7 +125,7 @@ const CustomerDashboard = ({ user, onExit, onProceedUpload }) => {
 
                     <div className="pt-4 border-t border-slate-100 grid grid-cols-2 gap-2">
                       <div className="h-16 bg-slate-100 rounded-lg border border-dashed border-slate-300 flex items-center justify-center text-[10px] font-bold text-slate-400 text-center p-2">
-                        INSTANT PRINT KIOSK WATERMARK
+                        INSTANT PRINT WATERMARK
                       </div>
                       <div className="h-16 bg-cyan-50 rounded-lg border border-cyan-200 flex flex-col items-center justify-center text-[9px] font-bold text-cyan-700">
                         <span>PRINTED COPIES</span>
@@ -136,7 +136,7 @@ const CustomerDashboard = ({ user, onExit, onProceedUpload }) => {
                 </div>
 
                 <div className="pt-6 border-t border-slate-200 flex items-center justify-between text-[10px] text-slate-400 font-mono">
-                  <span>CONFIDENTIAL KIOSK OUTPUT</span>
+                  <span>CONFIDENTIAL OUTPUT</span>
                   <span>{previewOrder.date}</span>
                 </div>
               </div>

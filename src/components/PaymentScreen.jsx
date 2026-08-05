@@ -96,7 +96,7 @@ const PaymentScreen = ({ printJobDetails, onPaymentSuccess }) => {
           <div className="text-2xl font-black text-emerald-600 mb-1">
             ₹{priceDetails.total}
           </div>
-          <p className="text-[11px] text-slate-500 font-mono mb-4">Merchant: INSTAPRINT KIOSK #402</p>
+          <p className="text-[11px] text-slate-500 font-mono mb-4">Merchant: INSTAPRINT #402</p>
 
           <button
             onClick={handleSimulatePayment}

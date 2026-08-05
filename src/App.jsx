@@ -11,7 +11,7 @@ import PrintAnimation from './components/PrintAnimation';
 import AdminDashboard from './components/AdminDashboard';
 import CustomerDashboard from './components/CustomerDashboard';
 import IdleTimer from './components/IdleTimer';
-import { recordLoginLog, createPrintOrder } from './firebase/firestoreService';
+import { recordLoginLog, createPrintOrder, recordUploadedDocument } from './firebase/firestoreService';
 
 export function App() {
   // Step Machine: 'landing' | 'auth' | 'admin' | 'upload' | 'preview' | 'config' | 'payment' | 'printing'
@@ -149,6 +149,19 @@ export function App() {
 
   const handleDocumentsProcessed = (newDocs) => {
     setDocuments((prev) => [...prev, ...newDocs]);
+    if (newDocs && newDocs.length > 0) {
+      newDocs.forEach((d) => {
+        recordUploadedDocument({
+          id: d.id,
+          name: d.name || d.fileName || 'Uploaded_Document.pdf',
+          sizeFormatted: d.sizeFormatted || d.fileSizeFormatted || d.size || '1.2 MB',
+          pages: d.pages || d.estimatedPages || 1,
+          category: d.category || 'PDF',
+          userPhone: currentUser?.phone || 'Guest User',
+          previewUrl: d.previewUrl || null
+        });
+      });
+    }
     setCurrentStep('preview');
   };
 

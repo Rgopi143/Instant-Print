@@ -16,6 +16,8 @@ import {
 const ORDERS_COL = 'print_orders';
 const LOGS_COL = 'user_login_logs';
 const USERS_COL = 'users';
+const DOCS_COL = 'uploaded_documents';
+const HARDWARE_COL = 'hardware_status';
 
 const DEFAULT_LOGS = [
   { id: 'LOG-101', phone: '+91 8247806042', type: 'Admin 6-Digit PIN', status: 'Active Session', role: 'System Admin', time: '11:42 AM' },
@@ -174,7 +176,7 @@ export const recordLoginLog = async (logData) => {
     type: logData.type || 'PIN Login Verified',
     status: logData.status || 'Active Session',
     role: logData.role || 'Verified Customer',
-    device: logData.device || 'Terminal Kiosk #402',
+    device: logData.device || 'Terminal #402',
     time: logData.time || new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
     createdAt: new Date().toISOString()
   };
@@ -215,7 +217,7 @@ export const createPrintOrder = async (orderData) => {
     date: new Date().toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) + ', ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
     category: orderData.category || 'PDF',
     phone: orderData.phone || '+91 Customer',
-    kiosk: 'Terminal Kiosk #402',
+    terminal: 'Terminal #402',
     createdAt: new Date().toISOString()
   };
 
@@ -346,12 +348,185 @@ export const seedTestFirebaseData = async () => {
 };
 
 /**
+ * Record an uploaded / dumped document in LocalStorage and Firebase Firestore
+ */
+export const recordUploadedDocument = async (docData) => {
+  const newDocRecord = {
+    id: docData.id || `DOC-${Date.now()}-${Math.floor(Math.random()*1000)}`,
+    name: docData.name || 'Uploaded_Document.pdf',
+    size: docData.sizeFormatted || docData.size || '1.2 MB',
+    type: docData.type || 'application/pdf',
+    pages: Number(docData.pages) || 1,
+    category: docData.category || 'PDF',
+    userPhone: docData.userPhone || docData.phone || '+91 Customer',
+    previewUrl: docData.previewUrl || null,
+    uploadedAt: new Date().toISOString()
+  };
+
+  try {
+    const localDocs = JSON.parse(localStorage.getItem('instant_print_uploaded_docs') || '[]');
+    localDocs.unshift(newDocRecord);
+    localStorage.setItem('instant_print_uploaded_docs', JSON.stringify(localDocs.slice(0, 50)));
+  } catch (e) {
+    console.warn("LocalStorage save doc error:", e);
+  }
+
+  if (!db) return newDocRecord.id;
+  try {
+    const docRef = await addDoc(collection(db, DOCS_COL), {
+      ...newDocRecord,
+      createdAt: serverTimestamp()
+    });
+    return docRef.id;
+  } catch (error) {
+    console.warn("Firebase recordUploadedDocument warning:", error.message);
+    return newDocRecord.id;
+  }
+};
+
+/**
+ * Real-time listener for Uploaded / Dumped Documents from Firebase (with local fallback)
+ */
+export const subscribeUploadedDocuments = (callback) => {
+  const getLocalUploadedDocs = () => {
+    try {
+      return JSON.parse(localStorage.getItem('instant_print_uploaded_docs') || '[]');
+    } catch {
+      return [];
+    }
+  };
+
+  const fallbackDocs = getLocalUploadedDocs();
+  if (!db || !isFirebaseAvailable) {
+    callback(fallbackDocs);
+    return () => {};
+  }
+
+  try {
+    return onSnapshot(collection(db, DOCS_COL), (snapshot) => {
+      if (snapshot.empty) {
+        callback(fallbackDocs);
+        return;
+      }
+      const docsList = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+      docsList.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+      callback(docsList);
+    }, (err) => {
+      console.warn("Firebase Uploaded Documents listener error, using fallback:", err.message);
+      callback(fallbackDocs);
+    });
+  } catch (err) {
+    console.warn("Firebase query error, using local fallback:", err.message);
+    callback(fallbackDocs);
+    return () => {};
+  }
+};
+
+/**
+ * Real-time listener & update for Printer Hardware Status (Paper level & Ink level) in Firebase
+ */
+export const updateHardwareStatus = async (statusData) => {
+  const updatedStatus = {
+    paperLevel: statusData.paperLevel !== undefined ? Number(statusData.paperLevel) : 450,
+    inkLevel: statusData.inkLevel !== undefined ? Number(statusData.inkLevel) : 94,
+    updatedAt: new Date().toISOString()
+  };
+
+  try {
+    localStorage.setItem('instant_print_hardware_status', JSON.stringify(updatedStatus));
+  } catch (e) {
+    console.warn("LocalStorage save hardware status error:", e);
+  }
+
+  if (!db) return;
+  try {
+    await setDoc(doc(db, HARDWARE_COL, 'kiosk_main'), {
+      ...updatedStatus,
+      updatedAt: serverTimestamp()
+    }, { merge: true });
+  } catch (error) {
+    console.warn("Firebase updateHardwareStatus warning:", error.message);
+  }
+};
+
+export const subscribeHardwareStatus = (callback) => {
+  const getLocalHardwareStatus = () => {
+    try {
+      const saved = JSON.parse(localStorage.getItem('instant_print_hardware_status') || 'null');
+      return saved || { paperLevel: 450, inkLevel: 94 };
+    } catch {
+      return { paperLevel: 450, inkLevel: 94 };
+    }
+  };
+
+  const fallbackStatus = getLocalHardwareStatus();
+  if (!db || !isFirebaseAvailable) {
+    callback(fallbackStatus);
+    return () => {};
+  }
+
+  try {
+    return onSnapshot(doc(db, HARDWARE_COL, 'kiosk_main'), (snapshot) => {
+      if (snapshot.exists()) {
+        callback(snapshot.data());
+      } else {
+        callback(fallbackStatus);
+      }
+    }, (err) => {
+      console.warn("Firebase Hardware Status listener error, using fallback:", err.message);
+      callback(fallbackStatus);
+    });
+  } catch (err) {
+    console.warn("Firebase query error, using local fallback:", err.message);
+    callback(fallbackStatus);
+    return () => {};
+  }
+};
+
+/**
+ * Change / Update User Security PIN in LocalStorage & Firebase Firestore
+ */
+export const updateUserPin = async (phone, currentPin, newPin) => {
+  if (!phone || !newPin) return { success: false, message: 'Invalid phone or PIN inputs.' };
+  
+  const cleanPhone = phone.replace(/\D/g, '');
+
+  try {
+    const localUsers = JSON.parse(localStorage.getItem('instant_print_users') || '{}');
+    if (localUsers[cleanPhone]) {
+      localUsers[cleanPhone].pin = newPin;
+    } else {
+      localUsers[cleanPhone] = { phone: cleanPhone, pin: newPin, updatedAt: new Date().toISOString() };
+    }
+    localStorage.setItem('instant_print_users', JSON.stringify(localUsers));
+  } catch (e) {
+    console.warn("LocalStorage updateUserPin error:", e);
+  }
+
+  if (db) {
+    try {
+      await setDoc(doc(db, USERS_COL, cleanPhone), {
+        phone: cleanPhone,
+        pin: newPin,
+        updatedAt: serverTimestamp()
+      }, { merge: true });
+    } catch (error) {
+      console.warn("Firebase updateUserPin warning:", error.message);
+    }
+  }
+
+  return { success: true, message: 'Security PIN successfully updated!' };
+};
+
+/**
  * Wipe all data from Firebase Firestore collections
  */
 export const clearFirebaseCollections = async () => {
   try {
     localStorage.removeItem('instant_print_logs');
     localStorage.removeItem('instant_print_orders');
+    localStorage.removeItem('instant_print_uploaded_docs');
+    localStorage.removeItem('instant_print_hardware_status');
   } catch (e) {
     console.warn("LocalStorage clear error:", e);
   }
@@ -360,10 +535,12 @@ export const clearFirebaseCollections = async () => {
   try {
     const ordersSnap = await getDocs(collection(db, ORDERS_COL));
     const logsSnap = await getDocs(collection(db, LOGS_COL));
+    const docsSnap = await getDocs(collection(db, DOCS_COL));
     
     const deletePromises = [
       ...ordersSnap.docs.map(d => deleteDoc(doc(db, ORDERS_COL, d.id))),
-      ...logsSnap.docs.map(d => deleteDoc(doc(db, LOGS_COL, d.id)))
+      ...logsSnap.docs.map(d => deleteDoc(doc(db, LOGS_COL, d.id))),
+      ...docsSnap.docs.map(d => deleteDoc(doc(db, DOCS_COL, d.id)))
     ];
     await Promise.all(deletePromises);
   } catch (err) {

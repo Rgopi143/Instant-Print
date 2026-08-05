@@ -63,7 +63,7 @@ const LandingPage = ({ onStart }) => {
           }}
           className="group relative inline-flex items-center justify-center gap-2 sm:gap-3 px-5 py-4 sm:px-8 sm:py-5 rounded-2xl bg-gradient-to-r from-cyan-500 via-cyan-400 to-violet-600 text-slate-950 font-black text-lg shadow-xl shadow-cyan-500/30 hover:shadow-cyan-500/50 transition-all duration-300 transform hover:-translate-y-1 active:scale-95 overflow-hidden"
           title="Touch to Start"
-          aria-label="Start Kiosk Session"
+          aria-label="Start Session"
         >
           <span className="absolute inset-0 bg-white/20 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></span>
           <Printer className="w-7 h-7 text-slate-950 group-hover:rotate-12 transition-transform duration-300" />

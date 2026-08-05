@@ -7,6 +7,7 @@ const PrintAnimation = ({ printJobDetails, onFinish }) => {
   const totalPages = printJobDetails.priceDetails.totalPages * printJobDetails.priceDetails.copies;
   const [currentPage, setCurrentPage] = useState(1);
   const [isComplete, setIsComplete] = useState(false);
+  const [redirectCountdown, setRedirectCountdown] = useState(5);
 
   useEffect(() => {
     if (currentPage <= totalPages) {
@@ -25,6 +26,22 @@ const PrintAnimation = ({ printJobDetails, onFinish }) => {
       return () => clearTimeout(timer);
     }
   }, [currentPage, totalPages]);
+
+  // Automatic redirect back to dashboard after print completion
+  useEffect(() => {
+    if (!isComplete) return;
+
+    if (redirectCountdown <= 0) {
+      onFinish();
+      return;
+    }
+
+    const timer = setInterval(() => {
+      setRedirectCountdown((prev) => prev - 1);
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [isComplete, redirectCountdown, onFinish]);
 
   const progressPercent = Math.min(100, Math.round((currentPage / totalPages) * 100));
 
@@ -110,9 +127,23 @@ const PrintAnimation = ({ printJobDetails, onFinish }) => {
           </div>
 
           <h2 className="text-3xl font-extrabold text-slate-900 mb-2">Print Job Completed!</h2>
-          <p className="text-sm text-slate-600 mb-6">
-            Please collect your <span className="text-emerald-700 font-bold">{totalPages} page(s)</span> from the kiosk output tray below.
+          <p className="text-sm text-slate-600 mb-4">
+            Please collect your <span className="text-emerald-700 font-bold">{totalPages} page(s)</span> from the output tray below.
           </p>
+
+          {/* Automatic Redirect Countdown Badge */}
+          <div className="mb-6 inline-flex flex-col items-center">
+            <span className="px-4 py-1.5 rounded-full bg-cyan-50 border border-cyan-200 text-cyan-700 font-bold text-xs flex items-center gap-2 shadow-xs">
+              <span className="w-2 h-2 rounded-full bg-cyan-500 animate-ping"></span>
+              Returning to Dashboard automatically in {redirectCountdown}s...
+            </span>
+            <div className="w-48 h-1 bg-slate-100 rounded-full overflow-hidden mt-2 border border-slate-200">
+              <div 
+                className="bg-cyan-500 h-full transition-all duration-1000" 
+                style={{ width: `${(redirectCountdown / 5) * 100}%` }}
+              />
+            </div>
+          </div>
 
           {/* Receipt Download Box */}
           <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 max-w-md mx-auto mb-8 text-xs text-slate-600 space-y-2">

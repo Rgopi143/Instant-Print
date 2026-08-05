@@ -86,7 +86,10 @@ export const analyzeDocumentWithAI = async (file) => {
       }
 
       resolve({
+        name: fileName,
         fileName,
+        pages: estimatedPages,
+        sizeFormatted: (sizeMB < 1 ? (sizeMB * 1024).toFixed(0) + " KB" : sizeMB.toFixed(2) + " MB"),
         fileSizeFormatted: (sizeMB < 1 ? (sizeMB * 1024).toFixed(0) + " KB" : sizeMB.toFixed(2) + " MB"),
         fileType: ext.toUpperCase(),
         category,
