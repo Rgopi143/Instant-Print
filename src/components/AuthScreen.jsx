@@ -266,22 +266,7 @@ const AuthScreen = ({ onLoginSuccess, onGuestContinue }) => {
                 </button>
               </form>
 
-              {/* Demo Credentials Info Banner */}
-              <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-left text-xs">
-                <span className="font-extrabold text-slate-800 block mb-1">🔑 Demo Admin & Customer Credentials:</span>
-                <div className="space-y-1 text-[11px] text-slate-600">
-                  <div className="flex items-center justify-between">
-                    <span>Admin Mobile: <strong className="text-cyan-700 font-mono">8247806042</strong> or <strong className="text-cyan-700 font-mono">8247392437</strong></span>
-                    <span className="px-2 py-0.5 rounded-lg bg-cyan-100 text-cyan-800 font-bold text-[10px]">System Admin</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span>Admin PIN: <strong className="text-violet-700 font-mono">824780</strong> or <strong className="text-violet-700 font-mono">824782</strong></span>
-                    <span className="px-2 py-0.5 rounded-lg bg-violet-100 text-violet-800 font-bold text-[10px]">PIN Bypass</span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="pt-2 border-t border-slate-100 flex flex-col gap-2">
+              <div className="pt-4 border-t border-slate-100 flex flex-col gap-2">
                 <button
                   onClick={() => {
                     audioFX.playButtonClick();
