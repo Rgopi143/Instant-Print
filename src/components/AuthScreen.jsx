@@ -34,7 +34,7 @@ const AuthScreen = ({ onLoginSuccess, onGuestContinue }) => {
     return false;
   };
 
-  // Step 1: Check Mobile Number in Database & Navigate
+  // Step 1: Check Mobile Number in Database & Navigate to PIN Verification
   const handleCheckPhone = async (e) => {
     if (e) e.preventDefault();
     if (!phone || phone.length < 6) return;
@@ -47,55 +47,45 @@ const AuthScreen = ({ onLoginSuccess, onGuestContinue }) => {
     const userProfile = await getUserProfile(phone);
     setLoading(false);
 
-    if (userProfile) {
-      // User found in Database -> Navigate directly to User or Admin Page!
-      const fullPhone = "+91 " + (userProfile.phone || phone);
-      const isAdmin = checkIsAdmin(userProfile, phone);
-      await recordLoginLog({
-        phone: fullPhone,
-        type: 'Database Lookup Login',
-        role: isAdmin ? 'System Admin' : 'Verified Customer',
-        status: 'Active Session'
-      });
+    let targetProfile = userProfile;
 
-      onLoginSuccess({
-        phone: fullPhone,
-        name: userProfile.name || (isAdmin ? 'Master Admin' : 'Verified Customer'),
-        whatsappNumber: userProfile.whatsappNumber || phone,
-        gender: userProfile.gender || 'Male',
-        userType: isAdmin ? 'System Administrator' : 'Verified Customer',
-        isAdmin: isAdmin
-      });
-    } else {
-      // Check if phone matches admin fallback shortcut numbers
+    if (!targetProfile) {
       const cleanP = phone.replace(/\D/g, '');
-      if (cleanP === '806042' || cleanP === '8247806042' || cleanP === '392437' || cleanP === '8247392437') {
-        const fullPhone = "+91 " + (cleanP.length === 6 ? (cleanP === '806042' ? '8247806042' : '8247392437') : cleanP);
-        await recordLoginLog({
-          phone: fullPhone,
-          type: 'Admin Shortcut Login',
-          role: 'System Admin',
-          status: 'Active Session'
-        });
-
-        onLoginSuccess({
-          phone: fullPhone,
-          name: 'System Administrator',
-          whatsappNumber: fullPhone,
+      if (cleanP === '806042' || cleanP === '8247806042') {
+        targetProfile = {
+          phone: '8247806042',
+          name: 'Master Admin',
+          whatsappNumber: '8247806042',
           gender: 'Male',
-          userType: 'System Administrator',
+          pin: '824780',
+          role: 'System Admin',
           isAdmin: true
-        });
-        return;
+        };
+      } else if (cleanP === '392437' || cleanP === '8247392437') {
+        targetProfile = {
+          phone: '8247392437',
+          name: 'System Administrator',
+          whatsappNumber: '8247392437',
+          gender: 'Male',
+          pin: '824782',
+          role: 'System Admin',
+          isAdmin: true
+        };
       }
+    }
 
+    if (targetProfile) {
+      setExistingUser(targetProfile);
+      setLoginPin(['', '', '', '', '', '']);
+      setStep('login_pin');
+    } else {
       setExistingUser(null);
       setWhatsappNumber(phone);
       setPhoneError(`No registered account found matching "${phone}". Please register below.`);
     }
   };
 
-  // Step 2A: Existing User Login with 6-Digit PIN
+  // Step 2A: Existing User & Admin Login with 6-Digit PIN
   const handleLoginPinChange = (index, value) => {
     if (!/^\d*$/.test(value)) return;
     if (loginError) setLoginError('');
@@ -119,31 +109,30 @@ const AuthScreen = ({ onLoginSuccess, onGuestContinue }) => {
 
     setTimeout(async () => {
       setLoading(false);
-      // Master Admin PIN check OR User PIN check
-      const isAdminPin = enteredPin === '824780' || enteredPin === '824782' || enteredPin === '824739';
-      const isAdminUser = checkIsAdmin(existingUser, phone);
-      const isUserPinValid = (existingUser && existingUser.pin === enteredPin) || isAdminPin || isAdminUser;
 
-      if (isUserPinValid || isAdminPin) {
-        const isAdmin = isAdminPin || isAdminUser;
+      const isAdmin = checkIsAdmin(existingUser, phone);
+      const validAdminPin = enteredPin === '824780' || enteredPin === '824782' || enteredPin === '824739';
+      const isUserPinValid = (existingUser && existingUser.pin === enteredPin) || validAdminPin;
+
+      if (isUserPinValid) {
         const fullPhone = "+91 " + (existingUser?.phone || phone);
         await recordLoginLog({
           phone: fullPhone,
-          type: 'PIN Login Verified',
+          type: isAdmin ? 'Admin 6-Digit PIN' : 'PIN Login Verified',
           role: isAdmin ? 'System Admin' : 'Verified Customer',
           status: 'Active Session'
         });
 
         onLoginSuccess({
           phone: fullPhone,
-          name: existingUser?.name || (isAdmin ? 'System Administrator' : 'Verified User'),
+          name: existingUser?.name || (isAdmin ? 'Master Admin' : 'Verified User'),
           whatsappNumber: existingUser?.whatsappNumber || phone,
           gender: existingUser?.gender || 'Male',
           userType: isAdmin ? 'System Administrator' : 'Verified Customer',
           isAdmin: isAdmin
         });
       } else {
-        setLoginError('Invalid PIN password. Please try again.');
+        setLoginError('Invalid 6-digit Security PIN. Please try again.');
       }
     }, 500);
   };
